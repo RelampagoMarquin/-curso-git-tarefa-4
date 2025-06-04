@@ -1,0 +1,30 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main # Dispara o workflow quando houver um push na branch main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest # Executa o job em um ambiente Ubuntu
+
+    steps:
+      - name: Checkout repository # Clona o repositório
+        uses: actions/checkout@v4
+
+      - name: Check for index.html # Etapa para verificar a existência do index.html
+        id: check_file
+        run: |
+          if [ ! -f public/index.html ]; then
+            echo "Error: public/index.html not found. Pipeline will fail."
+            exit 1
+          else
+            echo "public/index.html found. Proceeding with deployment."
+          fi
+
+      - name: Deploy to GitHub Pages # Publica o conteúdo no GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }} # Token de autenticação fornecido pelo GitHub
+          publish_dir: ./public # Diretório a ser publicado
